@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,25 +15,47 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var _questionIndex = 0;
-  final questions = const [
+  var _totalScore = 0;
+  final _questions = const [
     {
       'question': 'what\'s your favorite color?',
-      'answers': ['Red', 'Green', 'Blue', 'Yellow']
+      'answers': [
+        {'text': 'Red', 'score': 10},
+        {'text': 'Green', 'score': 5},
+        {'text': 'Pink', 'score': 3},
+        {'text': 'Yellow', 'score': 7}
+      ]
     },
     {
       'question': 'what\'s your favorite animal?',
-      'answers': ['Elephant', 'Lion', 'Tiger']
+      'answers': [
+        {'text': 'Elephant', 'score': 1},
+        {'text': 'Lion', 'score': 10},
+        {'text': 'Tiger', 'score': 5}
+      ]
     },
     {
       'question': 'what\'s your favorite Phone?',
-      'answers': ['IPhone', 'MI', 'Samsung', 'One+']
+      'answers': [
+        {'text': 'IPhone', 'score': 10},
+        {'text': 'MI', 'score': 1},
+        {'text': 'Samsung', 'score': 5}
+      ]
     }
   ];
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex++;
     });
     print(_questionIndex);
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
   }
 
   @override
@@ -43,19 +65,12 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Quiz'),
         ),
-        body: _questionIndex < questions.length
-            ? Column(
-                children: <Widget>[
-                  Question(questions[_questionIndex]['question']),
-                  ...(questions[_questionIndex]['answers'] as List<String>)
-                      .map((answer) {
-                    return Answer(_answerQuestion, answer);
-                  })
-                ],
-              )
-            : Center(
-                child: Text('You did It'),
-              ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                questions: _questions,
+                questionIndex: _questionIndex,
+                answerQuestion: _answerQuestion)
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
