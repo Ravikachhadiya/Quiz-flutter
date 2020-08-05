@@ -1,43 +1,61 @@
 import 'package:flutter/material.dart';
+import './question.dart';
+import './answer.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  var questionIndex = 0;
-  void answerQuestion() {
-    questionIndex++;
-    print(questionIndex);
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _MyAppState();
+  }
+}
+
+class _MyAppState extends State<MyApp> {
+  var _questionIndex = 0;
+  final questions = const [
+    {
+      'question': 'what\'s your favorite color?',
+      'answers': ['Red', 'Green', 'Blue', 'Yellow']
+    },
+    {
+      'question': 'what\'s your favorite animal?',
+      'answers': ['Elephant', 'Lion', 'Tiger']
+    },
+    {
+      'question': 'what\'s your favorite Phone?',
+      'answers': ['IPhone', 'MI', 'Samsung', 'One+']
+    }
+  ];
+  void _answerQuestion() {
+    setState(() {
+      _questionIndex++;
+    });
+    print(_questionIndex);
   }
 
+  @override
   Widget build(BuildContext context) {
-    var questions = [
-      'what\'s your favorite color?',
-      'what\'s your favorite animal?',
-    ];
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('Quiz'),
         ),
-        body: Column(
-          children: <Widget>[
-            Text(questions.elementAt(questionIndex)),
-            RaisedButton(
-              child: Text('Answer 1'),
-              onPressed: answerQuestion,
-            ),
-            RaisedButton(
-              child: Text('Answer 2'),
-              onPressed: answerQuestion,
-            ),
-            RaisedButton(
-              child: Text('Answer 3'),
-              onPressed: answerQuestion,
-            )
-          ],
-        ),
+        body: _questionIndex < questions.length
+            ? Column(
+                children: <Widget>[
+                  Question(questions[_questionIndex]['question']),
+                  ...(questions[_questionIndex]['answers'] as List<String>)
+                      .map((answer) {
+                    return Answer(_answerQuestion, answer);
+                  })
+                ],
+              )
+            : Center(
+                child: Text('You did It'),
+              ),
       ),
     );
   }
